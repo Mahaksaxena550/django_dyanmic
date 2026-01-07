@@ -1,0 +1,67 @@
+{% extends 'base.html' %}
+
+
+{% block title %}
+    <title>Show data</title>
+{% endblock title %}
+{% comment %} {% block content %}
+    {{data}}
+
+{% for i in data %}
+
+<p>{{i.name}}</p>
+<p>{{i.email}}</p>
+<p>{{i.contact}}</p>
+<p>{{i.qualification}}</p>
+<p>{{i.gender}}</p>
+<p>{{i.state}}</p>
+    
+{% endfor %}
+    
+{% endblock content %} {% endcomment %}
+
+{% comment %} {% block content%}
+ 
+{{data}}  <br>
+{{data.name}} <br>
+{{data.email}}  <br>
+
+{% endblock content%} {% endcomment %}
+
+{% block content %}
+
+<div class="container mt-4">
+    <table class="table table-bordered table-striped table-hover text-center">
+        <thead class="table-dark">
+            <tr>
+            <th>S.no</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Contact</th>
+                <th>Qualification</th>
+                <th>Gender</th>
+                <th>State</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            {% for i in data %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td>{{ i.name }}</td>
+                <td>{{ i.email }}</td>
+                <td>{{ i.contact }}</td>
+                <td>{{ i.qualification }}</td>
+                <td>{{ i.gender }}</td>
+                <td>{{ i.state }}</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6" class="text-danger">No data found</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+{% endblock content %}

@@ -1,0 +1,120 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Login</title>
+{% endblock title %}
+
+{% block content %}
+<style>
+body{
+    min-height:100vh;
+    background:
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+        url("https://images.unsplash.com/photo-1503264116251-35a269479413");
+    background-size: cover;
+    background-position: center;
+}
+
+.login-wrapper{
+    min-height: calc(100vh - 56px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.glass-card{
+    width:380px;
+    padding:35px;
+    background: rgba(255,255,255,0.15);
+    backdrop-filter: blur(14px);
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,0.3);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.35);
+    color:#fff;
+}
+
+.form-floating label{
+    color:#ddd;
+}
+
+.form-control{
+    background: rgba(255,255,255,0.25);
+    border:none;
+    color:#fff;
+}
+
+.form-control:focus{
+    background: rgba(255,255,255,0.35);
+    box-shadow:none;
+    color:#fff;
+}
+
+.eye-icon{
+    position:absolute;
+    right:15px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    color:#fff;
+}
+</style>
+
+<div class="login-wrapper">
+    <div class="glass-card">
+        <h2 class="text-center mb-4 fw-bold">Welcome Back</h2>
+{{pqr}}
+        <form method="post">
+            {% csrf_token %}
+
+            <!-- Username -->
+            <div class="form-floating mb-3">
+                <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                <label>Email</label>
+            </div>
+
+            <!-- Password with Eye Icon -->
+            <div class="form-floating mb-2 position-relative">
+                <input type="password" name="password" id="password" class="form-control" placeholder="Password" required>
+                <label>Password</label>
+                <i class="bi bi-eye eye-icon" onclick="togglePassword()"></i>
+            </div>
+
+            <!-- Forgot Password -->
+            <div class="text-end mb-3">
+                <small>
+                    <a href="#" class="text-white text-decoration-none">
+                        Forgot password?
+                    </a>
+                </small>
+            </div>
+
+            <button class="btn btn-light w-100 fw-bold py-2" type="submit">Login</button>
+        </form>
+
+        <!-- Register -->
+        <p class="text-center mt-4 mb-0">
+            <small>
+                Not registered?
+                <a href="{% url 'registration' %}" class="text-white fw-semibold text-decoration-none">
+                    Create account
+                </a>
+            </small>
+        </p>
+    </div>
+</div>
+
+<script>
+function togglePassword(){
+    const p = document.getElementById("password");
+    const icon = document.querySelector(".eye-icon");
+
+    if(p.type === "password"){
+        p.type = "text";
+        icon.classList.replace("bi-eye","bi-eye-slash");
+    }else{
+        p.type = "password";
+        icon.classList.replace("bi-eye-slash","bi-eye");
+    }
+}
+</script>
+{% endblock content %}
