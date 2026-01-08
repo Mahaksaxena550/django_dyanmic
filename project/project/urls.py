@@ -36,6 +36,7 @@ urlpatterns = [
     path('dashboard/show-query/', show_query, name='show_query'),
     path('admindashboard/delete/<int:id>/',delete,name='delete'),
     path('admindashboard/delete_dept/<int:id>/',delete_dept,name='delete_dept'),
+    path('admindashboard/reply_query/<int:id>/',reply_query,name='reply_query'),
     path('userdashboard/',userdashboard,name='userdashboard'),
     path('userdashboard/profile/',profile,name='profile'),
     path('userdashboard/query/',query,name='query'),

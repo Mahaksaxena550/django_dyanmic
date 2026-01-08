@@ -232,11 +232,7 @@ def add_dept(req):
         dept_code = req.POST.get('dept_code').strip()
         description = req.POST.get('description')
 
-        exists = Department.objects.filter(
-            department__iexact=dept_name
-        ).exists() or Department.objects.filter(
-            dept_code__iexact=dept_code
-        ).exists()
+        exists = Department.objects.filter(department__iexact=dept_name).exists() or Department.objects.filter(dept_code__iexact=dept_code).exists()
 
         if exists:
             req.session['msg'] = 'Department name or code already exists!'
@@ -312,6 +308,27 @@ def delete_dept(req,id):
      data.delete()
      return redirect('show_dept')
 
+def reply_query(req,id):
+     if 'admin' in req.session:
+        data = req.session.get('admin')
+        if req.method=='POST':
+             r = req.POST.get('reply')
+             querydata = Query.objects.get(id=id)
+             if len(r)>1:
+               querydata.solution = r
+               querydata.status="Done"
+               querydata.save()
+               queries = Query.objects.all().order_by('created_at')
+               return render(req,'admin_dashboard.html',{
+                'show_query':True,
+                'queries':queries,
+                'data':req.session.get('admin')
+               })
+     
+
+        else:
+             return render(req, 'admin_dashboard.html', {'data': data,'reply':True,'id':id})
+
 def logout(req):
       req.session.flush()
       return redirect('login')
@@ -344,7 +361,8 @@ def query_status(req):
      if 'user_id' in req.session:
           id=req.session['user_id']
           userdata=emp1.objects.get(id=id)
-          return render (req,'userdashboard.html',{'data':userdata,'query_status':True})
+          query_data=Query.objects.filter(email=userdata.email)
+          return render (req,'userdashboard.html',{'data':userdata,'query_status':query_data})
      else:
           return redirect('login')
 
@@ -365,8 +383,9 @@ def query_data(req):
                e=req.POST.get('email')
                s=req.POST.get('subject')
                q=req.POST.get('query')
+               solu=req.POST.get('reply','pending')
                print(n,e,s,q,sep=',')
-               Query.objects.create(name=n,email=e,subject=s,message=q)
+               Query.objects.create(name=n,email=e,subject=s,message=q,solution=solu)
             #    return render (req,'userdashboard.html',{'data':userdata})
                
                return render (req,'userdashboard.html',{'data':userdata,'query':True})
