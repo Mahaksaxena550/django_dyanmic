@@ -348,15 +348,15 @@ body {
         </tr>
       </thead>
       <tbody>
-        {% for q in queries %}
+        {% for q in all_query %}
         <tr>
           <td>{{ forloop.counter }}</td>
-          <td>{{ q.query }}</td>
+          <td>{{ q.message }}</td>
           <td>
-            <a href="{% url 'edit_query' q.id %}" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
+            <a href="#" class="btn btn-sm btn-warning"><i class="bi bi-pencil-square"></i> Edit</a>
           </td>
           <td>
-            <a href="{% url 'delete_query' q.id %}" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i> Delete</a>
+            <a href="#" class="btn btn-sm btn-danger" onclick="return confirm('Are you sure?')"><i class="bi bi-trash"></i> Delete</a>
           </td>
         </tr>
         {% empty %}

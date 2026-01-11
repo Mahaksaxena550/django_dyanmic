@@ -370,7 +370,8 @@ def all_query(req):
      if 'user_id' in req.session:
           id=req.session['user_id']
           userdata=emp1.objects.get(id=id)
-          return render (req,'userdashboard.html',{'data':userdata,'all_query':True})
+          a_query=Query.objects.filter(email=userdata.email)
+          return render (req,'userdashboard.html',{'data':userdata,'all_query':a_query})
      else:
           return redirect('login')
 
