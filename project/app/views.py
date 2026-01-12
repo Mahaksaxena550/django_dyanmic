@@ -392,3 +392,47 @@ def query_data(req):
                return render (req,'userdashboard.html',{'data':userdata,'query':True})
       else:
           return redirect('login')
+      
+def edit_query(req,pk):
+     if "user_id" in req.session:
+          id=req.session['user_id']
+          userdata=emp1.objects.get(id=id)
+          query=Query.objects.get(id=pk)
+          return render (req,'userdashboard.html',{'userdata':userdata,'e_query':query})
+     else:
+          return redirect('login')
+
+    
+    
+def Update_query(req,pk):
+    if 'user_id' in req.session:
+        id=req.session.get('user_id')
+        query=Query.objects.get(id=pk)
+        query.name=req.POST.get('name')
+        query.email=req.POST.get('email')
+        query.subject=req.POST.get('subject')
+        query.message=req.POST.get('query')
+        query.save()
+        userdata=emp1.objects.get(id=id)
+        queries = Query.objects.filter(email=userdata.email)
+        return render(req,'userdashboard.html',{'data':userdata,'all_query':True,'queries': queries})
+    else:
+         return redirect('login')
+    
+
+# def delete_query(req, pk):
+#     query = Query.objects.get(id=pk)
+#     query.delete()
+#     # return redirect(req,'all_query') 
+#     # return render(req,'userdashboard.html',{'queries':all_query})
+#     return redirect('all_query')
+ 
+def delete_query(req, pk):
+    if 'user_id' not in req.session:
+        return redirect('login')
+    u_id=req.session.get('user_id')
+    user=new.objects.get(id=u_id)
+    data=Query.objects.get(id=pk)
+    data.delete()
+    all_query=Query.objects.filter(email=user.email)
+    return redirect ('all_query')

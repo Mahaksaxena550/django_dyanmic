@@ -42,7 +42,10 @@ urlpatterns = [
     path('userdashboard/query/',query,name='query'),
     path('userdashboard/query_status/',query_status,name='query_status'),
     path('userdashboard/all_query/',all_query,name='all_query'),
-    path('query_data/',query_data,name='query_data'),
+    path('userdashboard/query_data/',query_data,name='query_data'),
+    path('usrdashboard/edit_query/<int:pk>/',edit_query,name='edit_query'),
+    path('userdashboard/Update_query/<int:pk>/',Update_query,name='Update_query'),
+    
     path('logout/',logout,name='logout'),
 
     
