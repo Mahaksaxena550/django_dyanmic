@@ -45,6 +45,7 @@ urlpatterns = [
     path('userdashboard/query_data/',query_data,name='query_data'),
     path('usrdashboard/edit_query/<int:pk>/',edit_query,name='edit_query'),
     path('userdashboard/Update_query/<int:pk>/',Update_query,name='Update_query'),
+    path('userdashboard/query/search/',search,name='search'),
     
     path('logout/',logout,name='logout'),
 
