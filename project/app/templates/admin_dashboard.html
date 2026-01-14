@@ -181,7 +181,7 @@
                     <td>{{ d.dept_code }}</td>
                     <td>{{ d.description }}</td>
                     <td>
-                        <a href="#" class="btn btn-sm btn-primary">
+                        <a href="{% url 'edit_dept' pk=d.id %}" class="btn btn-sm btn-primary">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
                         <a href="{% url 'delete_dept' d.id %}" class="btn btn-sm btn-danger"
@@ -198,6 +198,43 @@
     </div>
 </div>
 {% endif %}
+
+{% if edit_dept %}
+<div class="card dashboard-card">
+    <h4 class="text-center text-warning fw-bold mb-4">
+        <i class="bi bi-pencil-square"></i> Edit Department
+    </h4>
+
+    <form method="POST" action="{% url 'update_dept' dept.id %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label">Department Name</label>
+            <input type="text" name="department"
+                   value="{{ dept.department }}"
+                   class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Department Code</label>
+            <input type="text" name="dept_code"
+                   value="{{ dept.dept_code }}"
+                   class="form-control" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description"
+                      class="form-control">{{ dept.description }}</textarea>
+        </div>
+
+        <button class="btn btn-warning w-100 rounded-pill">
+            Update Department
+        </button>
+    </form>
+</div>
+{% endif %}
+
 
 {% if show_emp %}
 <div class="card dashboard-card">
@@ -234,7 +271,7 @@
                     <td>{{ e.department }}</td>
                     <td>{{ e.d_code }}</td>
                     <td>
-                        <a href="#" class="btn btn-sm btn-primary">
+                        <a href="{% url 'edit_emp' pk=e.id %}" class="btn btn-sm btn-primary">
                             <i class="bi bi-pencil-square"></i> Edit
                         </a>
                         <a href="{% url 'delete' e.id %}" class="btn btn-sm btn-danger"
@@ -252,53 +289,157 @@
 </div>
 {% endif %}
 
+{% if edit_emp %}
+<div class="card dashboard-card">
+    <h4 class="text-center text-warning fw-bold mb-4">
+        <i class="bi bi-pencil-square"></i> Edit Employee
+    </h4>
+
+    <form method="POST" action="{% url 'update_emp' emp.id %}" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row g-3">
+
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input type="text" name="name" value="{{ emp.name }}" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Email</label>
+                <input type="email" name="email" value="{{ emp.email }}" class="form-control" required>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Contact</label>
+                <input type="text" name="contact" value="{{ emp.contact }}" class="form-control" required>
+            </div>
+
+            <!-- ✅ Department Name -->
+            <div class="col-md-6">
+                <label class="form-label">Department</label>
+                <select name="department" class="form-select" required>
+                    <option value="">-- Select Department --</option>
+                    {% for d in departments %}
+                    <option value="{{ d.id }}"
+                        {% if d.department == emp.department %}selected{% endif %}>
+                        {{ d.department }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- ✅ Department Code (auto-filled, readonly) -->
+            <div class="col-md-6">
+                <label class="form-label">Department Code</label>
+                <input type="text" name="d_code" value="{{ emp.d_code }}"
+                       class="form-control" readonly>
+            </div>
+
+            <div class="col-md-6">
+                <label class="form-label">Profile Image</label>
+                <input type="file" name="image" class="form-control">
+            </div>
+
+            <div class="col-12 text-center">
+                <button class="btn btn-warning px-5 rounded-pill mt-3">
+                    Update Employee
+                </button>
+            </div>
+        </div>
+    </form>
+</div>
+{% endif %}
+
+
 {% if show_query %}
 <div class="card dashboard-card">
     <h4 class="text-center text-warning fw-bold mb-4">
-        <i class="bi bi-chat-dots"></i> Employee Queries
+        <i class="bi bi-chat-dots-fill"></i> Employee Queries
     </h4>
 
     <div class="table-responsive">
-        <table class="table table-hover">
+        <table class="table table-hover align-middle text-center">
             <thead class="table-warning">
                 <tr>
-                    <th>S.no.</th>
+                    <th>S.No.</th>
                     <th>Name</th>
                     <th>Email</th>
                     <th>Subject</th>
                     <th>Message</th>
-                    <th>Reply</th>
+                    <th>Action</th>
                 </tr>
             </thead>
+
             <tbody>
                 {% for q in queries %}
                 <tr>
                     <td>{{ forloop.counter }}</td>
-                    <td>{{ q.name }}</td>
-                    <td>{{ q.email }}</td>
-                    <td>{{ q.subject }}</td>
-                    <td>{{ q.message }}</td>
-                    <td class="text-center">
-                        <a href="{% url 'reply_query' q.id %}">
-                         Reply
+
+                    <td class="fw-semibold">
+                        {{ q.name }}
+                    </td>
+
+                    <td>
+                        <span class="text-muted">{{ q.email }}</span>
+                    </td>
+
+                    <td>
+                        <span class="badge bg-warning text-dark">
+                            {{ q.subject }}
+                        </span>
+                    </td>
+
+                    <td class="text-start">
+                        {{ q.message|truncatechars:60 }}
+                    </td>
+
+                    <td>
+                        <a href="{% url 'reply_query' q.id %}"
+                           class="btn btn-sm btn-warning rounded-pill px-3">
+                            <i class="bi bi-reply"></i> Reply
                         </a>
-                    </td> 
+                    </td>
                 </tr>
-                {% endfor %} 
+
+                {% empty %}
+                <tr>
+                    <td colspan="6" class="text-muted fw-semibold">
+                        No queries found
+                    </td>
+                </tr>
+                {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
 {% endif %}
 
-{% if reply %}
-    <form action="{% url 'reply_query' id %}" method="post">
-        {% csrf_token %}
-        reply <input type="text" name="reply">
-        <input type="submit" value="reply">        
 
+{% if reply %}
+<div class="card dashboard-card col-md-6 mx-auto">
+    <h4 class="text-center text-warning fw-bold mb-4">
+        <i class="bi bi-reply"></i> Reply to Query
+    </h4>
+
+    <form method="POST" action="{% url 'reply_query' id %}">
+        {% csrf_token %}
+
+        <div class="mb-3">
+            <label class="form-label fw-semibold">Reply Message</label>
+            <textarea name="reply" class="form-control" rows="4"
+                      placeholder="Type your reply here..." required></textarea>
+        </div>
+
+        <div class="text-center">
+            <button type="submit" class="btn btn-warning px-5 rounded-pill">
+                <i class="bi bi-send"></i> Send Reply
+            </button>
+        </div>
     </form>
+</div>
 {% endif %}
+
 </div>
 </div>
 </div>

@@ -267,6 +267,22 @@ def show_dept(req):
                 'data':req.session.get('admin')
           })
 
+def edit_dept(req,pk):
+     if 'admin' not in req.session:
+          return redirect('login')
+     dept=Department.objects.get(id=pk)
+     return render(req,'admin_dashboard.html',{'data':req.session.get('admin'),'edit_dept':True,'dept':dept})
+
+def update_dept(req, pk):
+    if 'admin' not in req.session:
+        return redirect('login')
+    dept = Department.objects.get(id=pk)
+    dept.department = req.POST.get('department')
+    dept.dept_code = req.POST.get('dept_code')
+    dept.description = req.POST.get('description')
+    dept.save()
+    return redirect('show_dept')
+
 
 
 def show_emp(req):
@@ -279,6 +295,37 @@ def show_emp(req):
                 'employees':employees,
                 'data':req.session.get('admin')
           })
+
+def edit_emp(req, pk):
+    if 'admin' not in req.session:
+        return redirect('login')
+    emp = emp1.objects.get(id=pk)
+    departments = Department.objects.all()
+    return render(req, 'admin_dashboard.html', {
+        'data': req.session.get('admin'),
+        'edit_emp': True,
+        'emp': emp,
+        'departments': departments
+    })
+
+def update_emp(req, pk):
+    if 'admin' not in req.session:
+        return redirect('login')
+    emp = emp1.objects.get(id=pk)
+    if req.method == 'POST':
+        emp.name = req.POST.get('name')
+        emp.email = req.POST.get('email')
+        emp.contact = req.POST.get('contact')
+        dep_id = req.POST.get('department')
+        dep = Department.objects.get(id=dep_id)
+        emp.department = dep.department
+        emp.d_code = dep.dept_code
+        emp.d_des = dep.description
+        if req.FILES.get('image'):
+            emp.image = req.FILES.get('image')
+        emp.save()
+    return redirect('show_emp')
+
 
 
 
@@ -325,7 +372,6 @@ def reply_query(req,id):
                 'data':req.session.get('admin')
                })
      
-
         else:
              return render(req, 'admin_dashboard.html', {'data': data,'reply':True,'id':id})
 
