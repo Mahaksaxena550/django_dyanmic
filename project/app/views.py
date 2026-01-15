@@ -2,6 +2,7 @@ from django.shortcuts import render,redirect
 from .models import Employee,Employee1 as emp1,Department,Query
 from django.http import HttpResponse 
 from django.core.mail import send_mail
+from django.db.models import Q
 
 # Create your views here.
 
@@ -448,6 +449,13 @@ def edit_query(req,pk):
      else:
           return redirect('login')
 
+def delete_query(req,pk):
+     if 'user_id' not in req.session:
+          return redirect('login')
+     data=Query.objects.get(id=pk)
+     data.delete()
+     return redirect('all_query')
+
     
     
 def Update_query(req,pk):
@@ -465,24 +473,56 @@ def Update_query(req,pk):
     else:
          return redirect('login')
     
-def search(req):
-     # if not 'user_id' in req.session:
-     #      return redirect('login')
-     # user_id=req.session.get('user_id')
-     # data=emp1.objects.get(id=user_id)
-     # s=req.POST.get('search')
-     # f_qdata=Query.objects.filter(name=s,message=s,status=s)
+# def search(req):
+#      # if not 'user_id' in req.session:
+#      #      return redirect('login')
+#      # user_id=req.session.get('user_id')
+#      # data=emp1.objects.get(id=user_id)
+#      # s=req.POST.get('search')
+#      # f_qdata=Query.objects.filter(name=s,message=s,status=s)
 
-     if 'user_id' in req.session:
-          id=req.session['user_id']
-          userdata=emp1.objects.get(id=id)
-          s=req.POST.get('search')
-          # a_query=Query.objects.filter(email=userdata.email,name=s)
-          # a_query=Query.objects.filter(email=userdata.email,name=s,query=s)
-          a_query=Query.objects.filter(email=userdata.email,name_contains=s,query_contains=s)
-          return render (req,'userdashboard.html',{'data':userdata,'all_query':a_query})
-     else:
-          return redirect('login')
+#      if 'user_id' in req.session:
+#           id=req.session['user_id']
+#           userdata=emp1.objects.get(id=id)
+#           s=req.POST.get('search')
+#           # print(s)
+#           # print(type(s))
+#           # a_query=Query.objects.filter(email=userdata.email,name=s)
+#           # all_query=Query.objects.filter(email=userdata.email,name=s,message=s)
+#           # all_query=Query.objects.filter(email=userdata.email,name__contains=s,message__contains=s)
+#           all_query=Query.objects.filter(Q(email__contains=userdata.email)&(Q(name__contains=s)|Q(message__contains=s)))
+#           print(s)
+#           # all_query=Query.objects.filter(Q(name__contains=s)|Q(message__contains=s))  // admin use only
+#           return render (req,'userdashboard.html',{'data':userdata,'all_query':True,'all_query':all_query})
+#      else:
+#           return redirect('login')
+
+
+def search(req):
+    if 'user_id' in req.session:
+        user_id = req.session['user_id']
+        userdata = emp1.objects.get(id=user_id)
+        name = req.POST.get('name')
+        message = req.POST.get('message')
+        status = req.POST.get('status')
+        all_query = Query.objects.filter(
+            email__icontains=userdata.email
+        )
+        if name:
+            all_query = all_query.filter(name__icontains=name)
+
+        if message:
+            all_query = all_query.filter(message__icontains=message)
+
+        if status:
+            all_query = all_query.filter(status__icontains=status)
+
+        return render(req, 'userdashboard.html', {
+            'data': userdata,
+            'all_query': all_query
+        })
+
+    return redirect('login')
 
 def reset(req):
     if 'user_id' in req.session:
@@ -490,6 +530,6 @@ def reset(req):
         userdata=emp1.objects.get(id=id)
         s=req.POST.get('search')
         queries = Query.objects.filter(email=userdata.email)
-        return render(req,'userdashboard.html',{'data':userdata,'all_query':True,'queries': queries})
+        return render(req,'userdashboard.html',{'data':userdata,'all_query':True,'all_query': queries})
     else:
         return redirect('login')
