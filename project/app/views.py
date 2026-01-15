@@ -444,7 +444,7 @@ def edit_query(req,pk):
           id=req.session['user_id']
           userdata=emp1.objects.get(id=id)
           query=Query.objects.get(id=pk)
-          return render (req,'userdashboard.html',{'userdata':userdata,'e_query':query})
+          return render (req,'userdashboard.html',{'data':userdata,'e_query':query})
      else:
           return redirect('login')
 
@@ -466,17 +466,30 @@ def Update_query(req,pk):
          return redirect('login')
     
 def search(req):
-     if not 'user_id' in req.session:
-          return redirect('login')
-     user_id=req.session.get('user_id')
-     data=emp1.objects.get(id=user_id)
-     s=req.POST.get('search')
-     f_qdata=Query.objects.filter(name=s,message=s,status=s)
-
-     # if 'user_id' in req.session:
-     #      id=req.session['user_id']
-     #      userdata=emp1.objects.get(id=id)
-     #      a_query=Query.objects.filter(email=userdata.email)
-     #      return render (req,'userdashboard.html',{'data':userdata,'all_query':a_query})
-     # else:
+     # if not 'user_id' in req.session:
      #      return redirect('login')
+     # user_id=req.session.get('user_id')
+     # data=emp1.objects.get(id=user_id)
+     # s=req.POST.get('search')
+     # f_qdata=Query.objects.filter(name=s,message=s,status=s)
+
+     if 'user_id' in req.session:
+          id=req.session['user_id']
+          userdata=emp1.objects.get(id=id)
+          s=req.POST.get('search')
+          # a_query=Query.objects.filter(email=userdata.email,name=s)
+          # a_query=Query.objects.filter(email=userdata.email,name=s,query=s)
+          a_query=Query.objects.filter(email=userdata.email,name_contains=s,query_contains=s)
+          return render (req,'userdashboard.html',{'data':userdata,'all_query':a_query})
+     else:
+          return redirect('login')
+
+def reset(req):
+    if 'user_id' in req.session:
+        id=req.session['user_id']
+        userdata=emp1.objects.get(id=id)
+        s=req.POST.get('search')
+        queries = Query.objects.filter(email=userdata.email)
+        return render(req,'userdashboard.html',{'data':userdata,'all_query':True,'queries': queries})
+    else:
+        return redirect('login')

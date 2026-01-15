@@ -50,6 +50,7 @@ urlpatterns = [
     path('usrdashboard/edit_query/<int:pk>/',edit_query,name='edit_query'),
     path('userdashboard/Update_query/<int:pk>/',Update_query,name='Update_query'),
     path('userdashboard/query/search/',search,name='search'),
+    path('userdashboard/query/reset/',reset,name='reset'),
     
     path('logout/',logout,name='logout'),
 
