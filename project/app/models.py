@@ -1,5 +1,5 @@
 from django.db import models
-
+from django.core.validators import MaxLengthValidator,MinLengthValidator
 # Create your models here.
 class Employee(models.Model):
     name = models.CharField(max_length=100,default='N/A')
@@ -22,7 +22,11 @@ class Employee(models.Model):
 
 
 class Employee1(models.Model):
-    name = models.CharField(max_length=100)
+    name = models.CharField(max_length=100,validators=[MaxLengthValidator(10),MinLengthValidator(3)],   error_messages={
+        'blank': 'Enter a valid name',
+        'min_length': 'Name must be at least 3 characters',
+        'max_length': 'Name must not exceed 10 characters',
+    })
     email = models.EmailField(unique=True)
     contact = models.CharField(max_length=15)
     image = models.ImageField(upload_to='employee_profiles/', null=True, blank=True)

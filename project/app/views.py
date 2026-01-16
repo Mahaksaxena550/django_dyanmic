@@ -519,7 +519,8 @@ def search(req):
 
         return render(req, 'userdashboard.html', {
             'data': userdata,
-            'all_query': all_query
+            'all_query': all_query,
+            'all_query':True
         })
 
     return redirect('login')
