@@ -422,36 +422,96 @@ body {
   </div>
   {% endif %}
 
-  {% if query_status %}
-  <div class="card shadow p-4 table-responsive">
-    <h5 class="mb-3 gradient-text">Query Status</h5>
-    <table class="table table-hover table-striped">
-      <thead class="table-dark">
-        <tr>
-          <th>S.no.</th>
-          <th>Query</th>
-          <th>Subject</th>
-          <th>Status</th>
-          <th>Solution</th>
-          
-        </tr>
-      </thead>
-      <tbody>
-        {% for q in query_status %}
-        <tr>
-          <td>{{ forloop.counter }}</td>
-          <td>{{ q.message }}</td>
-          <td>{{ q.subject }}</td>
-          <td>
-            {{q.status}}
-          </td>
-          <td>{{ q.solution}}</td>
-        </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+{% if query_status %}
+<div class="card shadow-lg p-4 table-responsive rounded-4">
+
+  <!-- ===== HEADER + CONTROLS ===== -->
+  <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center mb-4 gap-3">
+
+    <h5 class="mb-0 gradient-text fw-bold">
+      <i class="bi bi-chat-left-text"></i> Query Status
+    </h5>
+
+    <!-- 🔍 SEARCH + SORT + RESET -->
+    <form method="post" class="d-flex flex-wrap align-items-center gap-2">
+      {% csrf_token %}
+
+      <!-- Search -->
+      <input type="text" name="search"
+             class="form-control form-control-sm shadow-sm"
+             placeholder="Search query / subject / status"
+             value="{{ request.POST.search }}"
+             style="min-width:220px;">
+
+      <!-- Search Button -->
+      <button type="submit" class="btn btn-sm btn-primary shadow-sm">
+        <i class="bi bi-search"></i> Search
+      </button>
+
+      <!-- Latest First -->
+      <button type="submit" name="sort" value="latest"
+              class="btn btn-sm btn-outline-success shadow-sm">
+        <i class="bi bi-arrow-down"></i> Latest First
+      </button>
+
+      <!-- Oldest First -->
+      <button type="submit" name="sort" value="oldest"
+              class="btn btn-sm btn-outline-warning shadow-sm">
+        <i class="bi bi-arrow-up"></i> Oldest First
+      </button>
+
+      <!-- Reset -->
+      <a href="" class="btn btn-sm btn-outline-secondary shadow-sm">
+        <i class="bi bi-arrow-counterclockwise"></i> Reset
+      </a>
+    </form>
   </div>
-  {% endif %}
+
+  <!-- ===== TABLE ===== -->
+  <table class="table table-hover table-striped align-middle">
+    <thead class="table-dark text-center">
+      <tr>
+        <th>S.no.</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Query</th>
+        <th>Subject</th>
+        <th>Status</th>
+        <th>Solution</th>
+      </tr>
+    </thead>
+
+    <tbody>
+      {% for q in query_status %}
+      <tr>
+        <td class="text-center fw-semibold">{{ forloop.counter }}</td>
+        <td>{{ q.name }}</td>
+        <td>{{ q.email }}</td>
+        <td>{{ q.message }}</td>
+        <td>{{ q.subject }}</td>
+        <td class="text-center">
+          <span class="badge rounded-pill px-3 py-2
+            {% if q.status == 'Pending' %}bg-warning text-dark
+            {% elif q.status == 'Resolved' %}bg-success
+            {% else %}bg-secondary{% endif %}">
+            {{ q.status }}
+          </span>
+        </td>
+        <td>{{ q.solution|default:"—" }}</td>
+      </tr>
+      {% empty %}
+      <tr>
+        <td colspan="7" class="text-center text-danger fw-semibold py-4">
+          No records found
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+
+</div>
+{% endif %}
+
 {% if all_query %}
 <div class="card shadow p-4 table-responsive">
 
